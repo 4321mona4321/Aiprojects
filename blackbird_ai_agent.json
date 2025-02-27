@@ -1,0 +1,132 @@
+{
+  "name": "blackbird",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        -60
+      ],
+      "id": "e5b5d59a-94c2-43e6-9efa-3a70c4986e96",
+      "name": "When chat message received",
+      "webhookId": "6f9ffe9b-712d-429d-85c1-edce20523b3f"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -200,
+        -60
+      ],
+      "id": "68aa4dfc-4cdb-4d28-a37a-b4d7e49f07b1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -120,
+        160
+      ],
+      "id": "34fdc6b1-475f-44a9-ae1a-c33ba621725a",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        40,
+        160
+      ],
+      "id": "ed556008-ab36-45eb-8977-c62cb11c4cdf",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash-001-tuning",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        180
+      ],
+      "id": "d94e7655-84f3-476a-808d-3667dcf9613d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "BkRJOj3UInd0gjZA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e1688475-bc26-45a5-8294-b6c9e3710d0a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7997acdefdd8f68801e1ccfb5ea231b8eb159849f20ccf091c8da74f1e5949e6"
+  },
+  "id": "ICB4QnPTP8vDRsxu",
+  "tags": []
+}
