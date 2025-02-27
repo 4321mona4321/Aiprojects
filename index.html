@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Assistant</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 50px;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .response {
+            white-space: pre-wrap;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .response-title {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Legal Assistant</h1>
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2>Upload PDF</h2>
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" name="file" multiple class="form-control-file">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+        </div>
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2>Ask a Question</h2>
+                <form id="question-form">
+                    <div class="form-group">
+                        <input type="text" name="question" placeholder="Enter your question" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ask</button>
+                </form>
+            </div>
+        </div>
+        <div id="response" class="response mt-4"></div>
+    </div>
+    <script>
+        document.getElementById('upload-form').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        };
+
+        document.getElementById('question-form').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question: formData.get('question')
+                })
+            });
+            const result = await response.json();
+            displayResponse(result);
+        };
+
+        function displayResponse(result) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = '';
+
+            if (result.error) {
+                responseDiv.innerHTML = `<div class="alert alert-danger">${result.error}</div>`;
+                return;
+            }
+
+            const solution = document.createElement('div');
+            solution.classList.add('response-title');
+            solution.innerText = 'Solution:';
+            responseDiv.appendChild(solution);
+
+            const solutionText = document.createElement('div');
+            solutionText.innerText = result.solution;
+            responseDiv.appendChild(solutionText);
+
+            const confidence = document.createElement('div');
+            confidence.classList.add('response-title');
+            confidence.innerText = 'Confidence:';
+            responseDiv.appendChild(confidence);
+
+            const confidenceText = document.createElement('div');
+            confidenceText.innerText = result.confidence;
+            responseDiv.appendChild(confidenceText);
+
+            const sourcePdf = document.createElement('div');
+            sourcePdf.classList.add('response-title');
+            sourcePdf.innerText = 'Source PDF:';
+            responseDiv.appendChild(sourcePdf);
+
+            const sourcePdfText = document.createElement('div');
+            sourcePdfText.innerText = result.source_pdf;
+            responseDiv.appendChild(sourcePdfText);
+
+            const sources = document.createElement('div');
+            sources.classList.add('response-title');
+            sources.innerText = 'Sources:';
+            responseDiv.appendChild(sources);
+
+            result.sources.forEach(source => {
+                const sourceDiv = document.createElement('div');
+                sourceDiv.innerText = `Section: ${source.section}, Relevance: ${source.relevance}`;
+                responseDiv.appendChild(sourceDiv);
+            });
+        }
+    </script>
+</body>
+</html>
